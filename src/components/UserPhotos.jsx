@@ -1,50 +1,74 @@
-import { useState, useEffect } from 'react';
-import { Typography } from '@mui/material';
+import {
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Divider,
+} from '@mui/material';
 import { useParams } from 'react-router-dom';
-import model from '../modelData/models';
+import models from '../modelData/models';
+
 function UserPhotos() {
   const { userId } = useParams();
-  const photos = model.photoOfUserModel(userId);
+  const photos = models.photoOfUserModel(userId);
+
   return (
-    <Typography variant="body1">
-      <h2>Photos which that user uploaded</h2>
+    <Box p={3}>
+      <Typography variant="h4" gutterBottom>
+        Photos uploaded by user
+      </Typography>
+
       {photos.map((photo) => (
-        <ul key={photo._id}>
-          {Object.entries(photo).map(([key, value]) => {
-            return (
-              <li key={key}>
-                {key === 'file_name' ? (
-                  <img
-                    src={`/images/${value}`}
-                    alt={value}
-                    style={{ maxWidth: '200px', height: 'auto' }}
-                  />
-                ) : key === 'comments' ? (
-                  <ul>
-                    {Array.isArray(value) &&
-                      value.map((comment, index) => (
-                        <li key={index}>
-                          <ul>
-                            {Object.entries(comment).map(
-                              ([commentKey, commentVal], i) => (
-                                <li key={i}>
-                                  {commentKey} : {commentVal.toString()}
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        </li>
-                      ))}
-                  </ul>
-                ) : (
-                  `${key} : ${value.toString()}`
-                )}
-              </li>
-            );
-          })}
-        </ul>
+        <Card key={photo._id} sx={{ mb: 3 }}>
+          <CardMedia
+            component="img"
+            height="300"
+            image={`/images/${photo.file_name}`}
+            alt={photo.file_name}
+            sx={{ objectFit: 'contain', backgroundColor: '#fafafa' }}
+          />
+          <CardContent>
+            {Object.entries(photo).map(([key, value]) => {
+              if (key === 'file_name' || key === 'user_id' || key === '_id')
+                return null;
+              if (key === 'comments' && Array.isArray(value)) {
+                return (
+                  <Box key="comments" mt={2}>
+                    <Typography variant="h6">Comments:</Typography>
+                    {value.map((comment, i) => {
+                      return (
+                        <Box key={i} sx={{ mb: 1, pl: 2 }}>
+                          <Divider sx={{ mb: 1 }} />
+                          {Object.entries(comment).map(([k, v]) => {
+                            if (k === '_id' || k === 'photo_id') return null;
+                            if (k === 'user')
+                              return (
+                                <div>{v.first_name + ' ' + v.last_name}</div>
+                              );
+                            return (
+                              <Typography key={k} variant="body2">
+                                <strong>{k}:</strong> {v.toString()}
+                              </Typography>
+                            );
+                          })}
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                );
+              }
+
+              return (
+                <Typography key={key} variant="body2">
+                  <strong>{key}:</strong> {value.toString()}
+                </Typography>
+              );
+            })}
+          </CardContent>
+        </Card>
       ))}
-    </Typography>
+    </Box>
   );
 }
 

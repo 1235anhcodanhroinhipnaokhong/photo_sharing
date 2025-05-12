@@ -4,7 +4,9 @@ import models from '../modelData/models';
 import { useParams } from 'react-router-dom';
 function TopBar({ currentPage }) {
   const { userId } = useParams();
-  const userName = models.userModel(userId).first_name;
+  const user = userId ? models.userModel(userId) : null;
+  const userName = user ? user.first_name : '';
+
   return (
     <AppBar
       className="topbar-appBar"
@@ -19,7 +21,7 @@ function TopBar({ currentPage }) {
           <Typography variant="h6">
             {currentPage.charAt(0).toUpperCase() + currentPage.slice(1)} :{' '}
             {userName}
-          </Typography>{' '}
+          </Typography>
         </div>
       </Toolbar>
     </AppBar>
