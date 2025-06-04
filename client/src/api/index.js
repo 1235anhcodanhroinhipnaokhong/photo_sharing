@@ -1,8 +1,9 @@
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 
 const url = 'http://localhost:8081';
 
-export const fetchUsersList = () => axios.get(`${url}/users`);
-export const fetchUserDetail = (userId) => axios.get(`${url}/users/${userId}`);
+export const fetchUsersList = () => axiosInstance.get(`${url}/users`);
+export const fetchUserDetail = (userId) =>
+  axiosInstance.get(`${url}/users/${userId}`);
 export const fetchUserPhotoById = (userId) =>
-  axios.get(`${url}/photos/${userId}`);
+  axiosInstance.get(`${url}/photos/${userId}`);

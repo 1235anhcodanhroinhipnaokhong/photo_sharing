@@ -1,8 +1,13 @@
 // src/context/AuthContext.jsx
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const AuthContext = createContext();
+export const AuthContext = createContext({
+  user: null,
+  token: null,
+  login: async () => {},
+  logout: async () => {},
+});
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -19,7 +24,7 @@ export function AuthProvider({ children }) {
     setUser(userData);
     setToken(jwtToken);
     localStorage.setItem('token', jwtToken);
-    localStorage.setItem('user', JSON.stringify(userData)); // đúng rồi nè
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
@@ -35,3 +40,4 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+export const useAuth = () => useContext(AuthContext);

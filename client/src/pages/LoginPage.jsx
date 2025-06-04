@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import axios from '@/api/axiosInstance';
+import axiosInstance from '@/api/axiosInstance';
 import { AuthContext } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom'; // ✅ thêm dòng này
 
@@ -14,7 +14,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/admin/login', {
+      const res = await axiosInstance.post('/admin/login', {
         login_name: loginName,
         password,
       });

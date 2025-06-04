@@ -11,6 +11,7 @@ export default function UserList() {
       try {
         const { data } = await fetchUsersList();
         setUsers(data);
+        console.log(data);
       } catch (error) {
         console.log(error.message);
       }
