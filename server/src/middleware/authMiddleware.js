@@ -12,5 +12,19 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+const multer = require('multer');
+const path = require('path');
 
-module.exports = authenticateToken;
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/images'); // nơi lưu ảnh
+  },
+  filename: (req, file, cb) => {
+    // thêm timestamp để tránh trùng tên
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
+module.exports = { authenticateToken, upload };

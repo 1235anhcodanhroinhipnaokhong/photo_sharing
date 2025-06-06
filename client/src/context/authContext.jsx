@@ -1,7 +1,7 @@
 // src/context/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { jwtDecode } from 'jwt-decode';
 export const AuthContext = createContext({
   user: null,
   token: null,
@@ -15,13 +15,24 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setUser(decoded);
+        setToken(token);
+      } catch (err) {
+        console.error('Invalid token:', err);
+        logout();
+      }
+    } else {
       navigate('/login');
     }
-  }, [token, navigate]);
+  }, []);
 
   const login = (userData, jwtToken) => {
     setUser(userData);
+    console.log(userData);
     setToken(jwtToken);
     localStorage.setItem('token', jwtToken);
     localStorage.setItem('user', JSON.stringify(userData));

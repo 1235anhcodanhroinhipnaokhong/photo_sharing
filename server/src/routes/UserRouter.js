@@ -4,10 +4,9 @@ const {
   getUsersList,
   getUserDetail,
 } = require('../controllers/usersController');
-const authenticateToken = require('../middleware/authMiddleware');
 const router = express.Router();
+const { authenticateToken } = require('../middleware/authMiddleware');
 
-router.post('/', async (request, response) => {});
 router.get('/', authenticateToken, getUsersList);
 router.get('/:userId', authenticateToken, getUserDetail);
 module.exports = router;

@@ -35,7 +35,7 @@ app.use(express.json());
 app.use('/users', UserRouter);
 app.use('/photos', PhotoRouter);
 app.use('/admin', AdminRouter);
-
+app.use('/images', express.static('public/images'));
 app.listen(8081, () => {
   console.log('server listening on port 8081');
 });

@@ -4,8 +4,13 @@ import models from '../modelData/models';
 import { Link } from 'react-router-dom';
 import { fetchUsersList } from '../api/index';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/context/authContext';
 export default function UserList() {
   const [users, setUsers] = useState([]);
+  const { user } = useAuth();
+  if (user) console.log(user);
+  else console.log('no user');
+
   useEffect(() => {
     (async () => {
       try {

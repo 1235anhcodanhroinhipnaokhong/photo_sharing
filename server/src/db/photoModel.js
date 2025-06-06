@@ -12,4 +12,6 @@ const photoSchema = new mongoose.Schema({
   comments: [commentSchema],
 });
 const Photo = mongoose.model.Photos || mongoose.model('Photos', photoSchema);
+const Comment =
+  mongoose.model.Comments || mongoose.model('Comments', commentSchema);
 module.exports = Photo;

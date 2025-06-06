@@ -1,6 +1,6 @@
 const Photo = require('../db/photoModel');
 
-exports.getPhotosByUserId = async (req, res) => {
+const getPhotosByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
 
@@ -30,3 +30,80 @@ exports.getPhotosByUserId = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+
+const uploadPhoto = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const newPhoto = new Photo({
+      file_name: req.file.filename,
+      user_id: req.user.userId,
+      date_time: new Date(),
+    });
+
+    await newPhoto.save();
+    res
+      .status(201)
+      .json({ message: 'Photo uploaded', filename: req.file.filename });
+  } catch (err) {
+    console.error('Upload error:', err);
+    res.status(500).json({ message: 'Upload failed', error: err });
+  }
+};
+
+const uploadComment = async (req, res) => {
+  try {
+    const { photoId, comment } = req.body;
+    const userId = req.user.userId;
+
+    const photo = await Photo.findById(photoId);
+    if (!photo) {
+      return res.status(404).json({ message: 'Photo not found' });
+    }
+
+    photo.comments.push({
+      comment,
+      user_id: userId,
+      date_time: new Date(),
+    });
+
+    await photo.save();
+    res.status(201).json({ message: 'Comment added' });
+    console.log('comment ok');
+  } catch (err) {
+    res.status(500).json({ message: 'Comment failed', error: err.message });
+  }
+};
+
+const editComment = async (req, res) => {
+  try {
+    const { photoId, commentId } = req.params;
+    const { newComment } = req.body;
+    const userId = req.user.userId;
+
+    const photo = await Photo.findById(photoId);
+    if (!photo) {
+      return res.status(404).json({ message: 'Photo not found' });
+    }
+
+    const comment = photo.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    if (comment.user_id.toString() !== userId) {
+      return res.status(403).json({ message: 'Not your comment' });
+    }
+
+    comment.comment = newComment;
+    await photo.save();
+
+    res.status(200).json({ message: 'Comment updated', comment });
+  } catch (error) {
+    res.status(500).json({ message: 'Edit failed', error: error.message });
+  }
+};
+
+module.exports = { getPhotosByUserId, uploadPhoto, uploadComment, editComment };
