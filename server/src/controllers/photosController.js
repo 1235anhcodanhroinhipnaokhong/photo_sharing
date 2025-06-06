@@ -105,5 +105,51 @@ const editComment = async (req, res) => {
     res.status(500).json({ message: 'Edit failed', error: error.message });
   }
 };
+// const editPhoto = async (req, res) => {
+//   if (!req.body.newPhoto) {
+//     return res.status(400).json({ message: 'No file uploaded' });
+//   }
+//   try {
+//     const { photoId } = req.params;
+//     const { newPhoto } = req.body;
+//     const photo = await Photo.findById(photoId);
+//     photo.file_name = newPhoto.file_name;
+//     photo.date_time = new Date();
+//     await photo.save();
+//   } catch (error) {
+//     res.status(500).json({ message: 'Edit failed', error: error.message });
+//   }
+// };
+// controllers/photoController.js
+const editPhoto = async (req, res) => {
+  try {
+    const { photoId } = req.params;
+    const file = req.file;
 
-module.exports = { getPhotosByUserId, uploadPhoto, uploadComment, editComment };
+    if (!file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const photo = await Photo.findById(photoId);
+    if (!photo) {
+      return res.status(404).json({ message: 'Photo not found' });
+    }
+
+    // Update file_name và date_time
+    photo.file_name = file.filename;
+    photo.date_time = new Date();
+    await photo.save();
+
+    res.status(200).json({ message: 'Photo updated', filename: file.filename });
+  } catch (error) {
+    res.status(500).json({ message: 'Edit failed', error: error.message });
+  }
+};
+
+module.exports = {
+  getPhotosByUserId,
+  uploadPhoto,
+  uploadComment,
+  editComment,
+  editPhoto,
+};

@@ -24,14 +24,18 @@ export const postComment = async (photoId, comment, token) => {
   }
 };
 
-export const editComment = (photoId, commentId, newComment, token) => {
-  return axios.put(
-    `http://localhost:8081/photos/edit-comment/${photoId}/${commentId}`,
-    { newComment },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+export const editComment = (photoId, commentId, body, token) => {
+  return axios.put(`/comments/${photoId}/${commentId}`, body, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const editPhoto = (photoId, body, token) => {
+  return axios.put(`/photos/edit-photo/${photoId}`, body, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };

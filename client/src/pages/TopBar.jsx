@@ -15,10 +15,25 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import UploadPhoto from '@/components/UploadPhoto';
+import { Separator } from '@/components/ui/separator';
 
 function TopBar() {
   const { userId } = useParams();
   const { logout, user, token } = useAuth();
+  if (user) console.log(user);
+
+  const [userDetail, setUserDetail] = useState();
+  useEffect(() => {
+    (async () => {
+      if (!user?.userId) return; // kiểm tra ID hợp lệ
+      try {
+        const { data } = await fetchUserDetail(user.userId); // <-- sửa ở đây
+        setUserDetail(data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    })();
+  }, [user]);
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-blue-800 shadow text-white p-4 z-50 ">
@@ -45,10 +60,33 @@ function TopBar() {
                 </DialogContent>
               </form>
             </Dialog>
+            {userDetail && (
+              <Dialog>
+                <form>
+                  <DialogTrigger>
+                    {userDetail.first_name} {userDetail.last_name}
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Profile</DialogTitle>
+                      <DialogDescription>Your information</DialogDescription>
+                    </DialogHeader>
 
-            <p>
-              {user.first_name} {user.last_name}
-            </p>
+                    <Separator />
+
+                    <div className="space-y-2">
+                      <p>
+                        Name: {userDetail.first_name} {userDetail.last_name}
+                      </p>
+                      <p>Address: {userDetail.location}</p>
+                      <p>Description: {userDetail.description}</p>
+                      <p>Occupation: {userDetail.occupation}</p>
+                    </div>
+                  </DialogContent>
+                </form>
+              </Dialog>
+            )}
+
             <Button onClick={logout}>Logout</Button>
           </div>
         )}

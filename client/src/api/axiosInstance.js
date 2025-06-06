@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8081', // sửa theo port server
+  baseURL: 'http://localhost:8081',
 });
 
 axiosInstance.interceptors.request.use((config) => {

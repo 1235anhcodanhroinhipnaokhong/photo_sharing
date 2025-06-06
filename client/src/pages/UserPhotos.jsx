@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   editComment,
   fetchUserDetail,
@@ -11,6 +11,8 @@ import {
 import { format } from 'date-fns'; // Thêm thư viện format nếu anh dùng để định dạng ngày
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/authContext';
+import UploadPhoto from '@/components/UploadPhoto';
+import EditPhoto from '@/components/EditPhoto';
 
 function UserPhotos() {
   const { userId } = useParams();
@@ -19,11 +21,12 @@ function UserPhotos() {
   const [comment, setComment] = useState();
   const { user, token } = useAuth();
   const [editingCommentId, setEditingCommentId] = useState(null);
-  const [editedTexts, setEditedTexts] = useState({});
-
+  const [editedText, setEditedText] = useState();
+  const [uploadPhoto, setUploadPhoto] = useState(false);
+  const [editPhotoId, setEditPhotoId] = useState();
   const handleEdit = async (photoId, commentId) => {
     try {
-      await editComment(photoId, commentId, editedTexts, token); // Gửi editedText và token
+      await editComment(photoId, commentId, { newComment: editedText }, token);
 
       const updatedPhotos = photos.map((photo) => {
         if (photo._id === photoId) {
@@ -41,8 +44,8 @@ function UserPhotos() {
       });
 
       setPhotos(updatedPhotos);
-      setEditingCommentId(comment._id);
-      setEditedTexts((prev) => ({ ...prev, [comment._id]: comment.comment }));
+      setEditingCommentId(null);
+      setEditedText('');
     } catch (error) {
       console.error('Edit failed:', error.message);
     }
@@ -51,7 +54,6 @@ function UserPhotos() {
   const handleSendComment = async (photoId, comment, token) => {
     try {
       await postComment(photoId, comment, token);
-
       const updatedPhotos = photos.map((p) => {
         if (p._id === photoId) {
           return {
@@ -78,6 +80,10 @@ function UserPhotos() {
     } catch (error) {
       console.error('Failed to post comment:', error.message);
     }
+  };
+  const handleEditPhoto = (id) => {
+    setUploadPhoto(true);
+    setEditPhotoId(id);
   };
   useEffect(() => {
     (async () => {
@@ -106,8 +112,9 @@ function UserPhotos() {
               alt={photo.file_name}
               className="object-contain max-h-full"
             />
+            <button onClick={() => handleEditPhoto(photo._id)}>Edit</button>
           </div>
-
+          {uploadPhoto && <EditPhoto token={token} photoId={editPhotoId} />}
           <CardContent className="space-y-2 mt-2">
             {photo.comments?.length > 0 && (
               <div className="mt-4">
@@ -118,17 +125,14 @@ function UserPhotos() {
                     <div className="flex ">
                       <p className="text-sm font-semibold">
                         {comment.user?.first_name} {comment.user?.last_name}
-                        {comment.user?._id === user?.userId && (
+                        {/* {comment.user?._id === user?.userId && (
                           <>
                             {editingCommentId === comment._id ? (
                               <>
                                 <input
-                                  value={editedTexts}
+                                  value={editedText}
                                   onChange={(e) =>
-                                    setEditedTexts((prev) => ({
-                                      ...prev,
-                                      [comment._id]: e.target.value,
-                                    }))
+                                    setEditedText(e.target.value)
                                   }
                                 />
                                 <button
@@ -143,17 +147,14 @@ function UserPhotos() {
                               <Button
                                 onClick={(e) => {
                                   setEditingCommentId(comment._id);
-                                  setEditedTexts((prev) => ({
-                                    ...prev,
-                                    [comment._id]: e.target.value,
-                                  }));
+                                  setEditedText(comment.comment);
                                 }}
                               >
                                 Edit
                               </Button>
                             )}
                           </>
-                        )}
+                        )} */}
                       </p>
                     </div>
                     <p className="text-sm text-muted-foreground">
