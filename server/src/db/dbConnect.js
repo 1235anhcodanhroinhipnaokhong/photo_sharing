@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const { DB_USER, DB_PASSWORD, DB_APP } = process.env;
 
-const uri = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.ypetl7o.mongodb.net/?retryWrites=true&w=majority&appName=${DB_APP}`;
+const uri = process.env.DB_URL;
 async function dbConnect() {
   mongoose
     .connect(uri, { dbName: 'photo_sharing' })
