@@ -27,7 +27,7 @@ const UserRouter = require('./routes/UserRouter');
 const PhotoRouter = require('./routes/PhotoRouter');
 const AdminRouter = require('./routes/admin');
 // const CommentRouter = require('./routes/CommentRouter');
-
+const { PostRouter } = require('./routes/postRoute');
 dbConnect();
 // dbLoad();
 app.use(cors());
@@ -36,6 +36,7 @@ app.use('/users', UserRouter);
 app.use('/photos', PhotoRouter);
 app.use('/admin', AdminRouter);
 app.use('/images', express.static('public/images'));
+// app.use('/post', PostRouter);
 app.listen(8081, () => {
   console.log('server listening on port 8081');
 });

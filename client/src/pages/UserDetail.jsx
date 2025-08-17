@@ -1,24 +1,25 @@
 import { useParams, Link } from 'react-router-dom';
-import models from '../modelData/models';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useEffect, useState } from 'react';
 import { fetchUserDetail } from '@/api';
+
 function UserDetail() {
   const { userId } = useParams();
   const [user, setUser] = useState();
+
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await fetchUserDetail(userId);
-        setUser(data);
-        console.log(data);
+        const { data: user } = await fetchUserDetail(userId);
+        setUser(user);
       } catch (error) {
         console.log(error.message);
       }
     })();
-  }, []);
+  }, [userId]);
+
   if (!user) return null;
 
   return (
@@ -41,6 +42,10 @@ function UserDetail() {
       <Link to={`/users/${user._id}/photos`}>
         <Button className="mt-4 bg-blue-800">View Uploaded Photos</Button>
       </Link>
+      <Link to={`/users/${user._id}/posts`}>
+        <Button className="mt-4 bg-blue-800">View Posts</Button>
+      </Link>
+      {/* <Button onClick>View posts</Button> */}
     </Card>
   );
 }

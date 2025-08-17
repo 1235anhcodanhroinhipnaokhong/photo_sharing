@@ -7,6 +7,7 @@ import UserPhotos from './pages/UserPhotos.jsx';
 import ProtectedLayout from './pages/ProtectedLayout.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import { AuthProvider } from './context/authContext.jsx';
+import PostDetail from './pages/UserPosts.jsx';
 
 // Tạo một layout bao toàn bộ App bằng AuthProvider
 function AppLayout() {
@@ -36,7 +37,7 @@ const router = createBrowserRouter([
         children: [
           { path: '', element: <UserList /> },
           { path: ':userId', element: <UserDetail /> },
-          { path: ':userId/photos', element: <UserPhotos /> },
+          { path: ':userId/posts', element: <PostDetail /> },
         ],
       },
       {
